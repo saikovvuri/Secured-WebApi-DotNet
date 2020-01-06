@@ -1,0 +1,69 @@
+@host = localhost:5001
+
+# -----------------------
+# Get OAuth 2 Token
+###
+# @name login
+@resource = {{SERVER_ID}}
+
+POST https://login.microsoftonline.com/{{TENANT_ID}}/oauth2/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&client_id={{CLIENT_ID}}&client_secret={{CLIENT_SECRET}}&&resource={{resource}}
+
+@authToken = {{login.response.body.access_token}}
+
+# -----------------------
+# API: todoitem-api
+###
+# @name createTodoItem
+POST https://{{host}}/api/TodoItems
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name":"walk dog",
+  "isComplete":true
+}
+
+
+@todoItemId = {{createTodoItem.response.body.id}}
+
+# -----------------------
+# API: todoitem-api
+###
+# @name getTodoItems
+GET https://{{host}}/api/TodoItems
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+# -----------------------
+# API: todoitem-api
+###
+# @name getTodoItemById
+GET https://{{host}}/api/TodoItems/{{todoItemId}}
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+# -----------------------
+# API: todoitem-api
+###
+# @name updateTodoItem
+PUT https://{{host}}/api/TodoItems/{{todoItemId}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "id": {{todoItemId}},
+    "name":"feed fish",
+    "isComplete":true
+}
+
+
+# -----------------------
+# API: todoitem-api
+###
+# @name deleteTodoItem
+DELETE https://{{host}}/api/TodoItems/{{todoItemId}}
+Authorization: Bearer {{authToken}}
+Accept: application/json
